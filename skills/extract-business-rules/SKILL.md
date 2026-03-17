@@ -8,6 +8,17 @@ description: Use when analyzing code for conditional logic, validation rules, ex
 ## Overview
 Extract business rules from code by identifying conditional logic, validation patterns, and exception handling.
 
+## When to Use
+Use when analyzing code for conditional logic, validation rules, exception handling, or business constraints. Triggers on:
+- If/else chains and guard clauses
+- Validation decorators and libraries
+- Exception throwing and error handling
+- Regex patterns and format validation
+- Condition checks and assertions
+
+## Core Principle
+**Rule-first: Extract the business constraint, not the implementation**
+
 ## Checklist
 
 1. **Hotspot Discovery** - Find files with business rule patterns
@@ -79,6 +90,24 @@ Extraction: 2025-03-17
 - **Too many patterns**: "Large codebase detected. Analyzing module-by-module..."
 - **Ambiguous logic**: Extract with note "[CONFIRM: Does this mean...?]"
 - **Conflicting rules**: Flag as "CONFLICT: Same rule differs between X and Y"
+- **Overly complex logic**: Extract with note "[COMPLEX: Simplify for documentation]"
+- **Business rule hidden**: Extract with note "[REVIEW: May be business rule, confirm]"
+
+## Red Flags
+
+**Never:**
+- Extract implementation details instead of business rules
+- Document code mechanics without business meaning
+- Skip validation logic (decorators, exceptions, checks)
+- Assume rule semantics without reading context
+- Document inferred rules without source verification
+
+**Always:**
+- Extract the business constraint (what), not code (how)
+- Include enforcement mechanism (guard clause, decorator, exception)
+- Provide source location for every rule
+- Clarify ambiguous rules with [CONFIRM] notes
+- Flag conflicting rules explicitly
 
 ## Integration
 
