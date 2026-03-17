@@ -58,4 +58,22 @@ If there's even a 1% chance a skill might apply, you MUST use it.
 - business-analyst:extract-user-stories
 - business-analyst:extract-security-nfrs
 - business-analyst:extract-integrations
-- business-analyst:verification-agent
+
+## Available Agents
+
+Agents are autonomous specialists that perform complex multi-step tasks:
+
+- **business-analyst:verification-agent**
+  - Reviews extracted artifacts for accuracy and completeness
+  - Cross-checks that all patterns were captured
+  - Validates source locations and documentation
+
+- **business-analyst:artifact-extractor** (via agents/artifact-extractor.md)
+  - Deep extraction for complex files with 10+ patterns
+  - Handles large-scale analysis tasks
+  - Produces comprehensive output documentation
+
+Dispatch agents when:
+- Files contain 10+ patterns of the same type
+- Analysis requires multi-step coordination
+- Verification of extracted artifacts is needed
