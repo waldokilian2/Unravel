@@ -6,7 +6,19 @@ description: Use when analyzing code for user-facing features or requirements. A
 # Extracting User Stories
 
 ## Overview
-Derive user stories from controllers, routes, and event handlers.
+Derive user stories from controllers, routes, and event handlers by understanding what user actions the system enables and what outcomes it delivers.
+
+## When to Use
+Use when analyzing code for user-facing features or requirements. Triggers on:
+- Controller definitions
+- Route handlers (@Get, @Post, router.get, etc.)
+- Event handlers
+- CLI commands
+- API endpoints
+- UI event handlers
+
+## Core Principle
+**Intent-first: Derive user goals from implementation endpoints**
 
 ## Checklist
 
@@ -19,16 +31,39 @@ Derive user stories from controllers, routes, and event handlers.
 
 ```bash
 # Find route definitions
-grep -r "@Get\|@Post\|router\." --include="*.ts" --include="*.js" -l | head -20
+grep -r "@Get\|@Post\|@Put\|@Delete\|router\." --include="*.ts" --include="*.js" -l | head -20
 
 # Find controllers
 grep -r "Controller" --include="*.ts" -l | head -20
+
+# Find event handlers
+grep -r "on\|addEventListener\|handle" --include="*.ts" --include="*.js" -l | head -20
+
+# Find CLI commands
+grep -r "command\|cli\|yargs\|commander" --include="*.ts" -l | head -20
 ```
+
+Exclude generated code:
+```bash
+--exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build --exclude-dir=.next
+```
+
+## Pattern Signals
+
+| Pattern | Example | User Story |
+|---------|---------|------------|
+| POST endpoint | `@Post('register')` | As a user, I can register |
+| GET endpoint | `@Get('profile')` | As a user, I can view my profile |
+| Event handler | `on('click', submit)` | As a user, I can submit forms |
+| CLI command | `command('build')` | As a developer, I can build the project |
+| WebSocket | `@SubscribeMessage('chat')` | As a user, I can send chat messages |
 
 ## Output Format
 
 ```markdown
 ## User Stories
+
+Extraction: 2025-03-17
 
 ### Authentication
 - As a user, I can register with email/password
@@ -38,4 +73,46 @@ grep -r "Controller" --include="*.ts" -l | head -20
 - As a user, I can log in and receive a JWT
   Source: POST /api/auth/login (src/controllers/auth.ts:45)
   Implementation: login() function
+
+### User Management
+- As an admin, I can view all users
+  Source: GET /api/admin/users (src/admin/users.ts:12)
+  Implementation: findAll() function with @RolesAllowed('admin')
 ```
+
+## Token Efficiency
+- Only read files that match hotspot patterns
+- Derive user intent from route names and parameters
+- Group related stories by feature/module
+- If 50+ stories found, suggest analyzing by module
+- Use standard "As a [role], I can [action]" format
+
+## Edge Cases
+- **No patterns found**: "No user stories detected. Check: are you in the right directory?"
+- **Too many patterns**: "Large codebase detected. Analyzing module-by-module..."
+- **Internal endpoints**: Mark as "[INTERNAL: Not user-facing]"
+- **Ambiguous intent**: Extract with note "[CONFIRM: Does this mean...?]"
+- **Multiple roles**: Document all applicable roles
+- **Admin-only features**: Clearly mark role requirements
+- **Batch operations**: Note "[BATCH: Processes multiple items]"
+
+## Red Flags
+
+**Never:**
+- Infer user stories without reading route implementations
+- Assume user roles from route names alone
+- Document features that don't have user-facing endpoints
+- Skip authentication/authorization requirements
+- Create stories without source verification
+
+**Always:**
+- Read route/controller implementations to understand behavior
+- Include the user role (user, admin, system, etc.)
+- Document what the user achieves (outcome, not just action)
+- Include source locations (file:line)
+- Note permission/role requirements
+- Verify the endpoint is actually user-facing
+
+## Integration
+- For complex files (10+ stories), dispatch agents/artifact-extractor.md
+- Use business-analyst:verification-agent to verify output
