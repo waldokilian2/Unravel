@@ -28,9 +28,9 @@ This skill **always** orchestrates subagent execution. Even for single-file extr
 
 **How it works:**
 1. You (orchestrator) analyze scope and identify files
-2. Dispatch one or more business-rules-extractor-subagent tasks
+2. Dispatch business-rules-extractor-subagent tasks sequentially
 3. For each completed task: run spec compliance review → quality review
-4. Aggregate results into docs/output/business-rules.md
+4. Output is accumulated in docs/output/business-rules.md
 
 ## Core Principle
 **Rule-first: Extract the business constraint, not the implementation**
@@ -129,7 +129,7 @@ Extraction: 2025-03-17
 
 **Single file:**
 ```
-Task("Extract business rules from payment.ts")
+Agent("Extract business rules from payment.ts")
 
 Subagent receives:
 - File: payment.ts
@@ -137,13 +137,14 @@ Subagent receives:
 - Output: docs/output/business-rules.md
 ```
 
-**Multiple files (parallel):**
+**Multiple files (sequential):**
 ```
-Task("Extract business rules from auth module")
-Task("Extract business rules from payment module")
-Task("Extract business rules from user module")
-
-All three run concurrently
+Step 1: Agent("Extract business rules from auth module")
+→ Wait for completion →
+Step 2: Agent("Extract business rules from payment module")
+→ Wait for completion →
+Step 3: Agent("Extract business rules from user module")
+→ Wait for completion
 ```
 
 ## Two-Stage Review (Required)
@@ -175,5 +176,5 @@ Task("Review quality for business rules extraction")
 
 **For large tasks (10+ patterns, 5+ files):**
 - Use unravel:orchestrating-extractions for full orchestration
-- Use unravel:dispatching-parallel-extractors for parallel execution
+- Use unravel:dispatching-sequential-extractors for sequential execution within category
 - Use unravel:planning-extractions to create task plans

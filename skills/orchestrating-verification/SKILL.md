@@ -185,7 +185,7 @@ Recommendation: ✅ Approved for use
 
 **Used with:**
 - **unravel:orchestrating-extractions** - After extraction completes
-- **unravel:dispatching-parallel-extractors** - After parallel extraction completes
+- **unravel:dispatching-sequential-extractors** - After sequential extraction completes
 - **Direct extraction skills** - After any extraction (optional verification)
 
 **Commands:**

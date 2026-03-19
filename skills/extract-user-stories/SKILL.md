@@ -133,7 +133,7 @@ Extraction: 2025-03-17
 
 **Single file:**
 ```
-Task("Extract user stories from auth.controller.ts")
+Agent("Extract user stories from auth.controller.ts")
 
 Subagent receives:
 - File: auth.controller.ts
@@ -141,13 +141,14 @@ Subagent receives:
 - Output: docs/output/user-stories.md
 ```
 
-**Multiple files (parallel):**
+**Multiple files (sequential):**
 ```
-Task("Extract user stories from auth controllers")
-Task("Extract user stories from payment controllers")
-Task("Extract user stories from user controllers")
-
-All three run concurrently
+Agent("Extract user stories from auth controllers")
+→ Wait for completion →
+Agent("Extract user stories from payment controllers")
+→ Wait for completion →
+Agent("Extract user stories from user controllers")
+→ Wait for completion
 ```
 
 ## Two-Stage Review (Required)
@@ -179,5 +180,5 @@ Task("Review quality for user stories extraction")
 
 **For large tasks (10+ stories, 5+ files):**
 - Use unravel:orchestrating-extractions for full orchestration
-- Use unravel:dispatching-parallel-extractors for parallel execution
+- Use unravel:dispatching-sequential-extractors for sequential execution within category
 - Use unravel:planning-extractions to create task plans

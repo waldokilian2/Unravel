@@ -190,5 +190,5 @@ Task("Review quality for security/NFRs extraction")
 
 **For large tasks (10+ measures, 5+ files):**
 - Use unravel:orchestrating-extractions for full orchestration
-- Use unravel:dispatching-parallel-extractors for parallel execution
+- Use unravel:dispatching-sequential-extractors for sequential execution within category
 - Use unravel:planning-extractions to create task plans

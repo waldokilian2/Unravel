@@ -63,13 +63,17 @@ This creates a detailed plan with:
 
 For each task, dispatch a focused subagent:
 
-**Example parallel dispatch:**
+**Example sequential dispatch (same artifact category):**
 ```
-Task("Extract business rules from auth module (5 files)")
-Task("Extract business rules from payment module (4 files)")
-Task("Extract business rules from user module (6 files)")
-// All three run concurrently
+Step 1: Agent("Extract business rules from auth module (5 files)")
+→ Wait for completion →
+Step 2: Agent("Extract business rules from payment module (4 files)")
+→ Wait for completion →
+Step 3: Agent("Extract business rules from user module (6 files)")
+→ Wait for completion
 ```
+
+Use dispatching-sequential-extractors for multiple tasks within the same category.
 
 **Subagent prompt template:**
 ```markdown
@@ -77,12 +81,12 @@ Extract [artifact type] from [module/files]:
 
 **Files:** [specific file paths]
 **Artifact Type:** [business-rules/process-flows/etc]
-**Output:** Save to docs/output/[type].md
+**Output:** Append to docs/output/[type].md
 
 **Process:**
 1. Read assigned files
 2. Extract patterns
-3. Format output per template
+3. Append output to shared file
 4. Self-review and report back
 ```
 
@@ -147,11 +151,11 @@ Payment module: 4 files, ~25 rules
 User module: 6 files, ~30 rules
 ```
 
-**Step 3: Parallel Dispatch**
+**Step 3: Sequential Dispatch**
 ```
-Agent 1 → Extract business rules from auth module
-Agent 2 → Extract business rules from payment module
-Agent 3 → Extract business rules from user module
+Agent 1 → Extract business rules from auth module → Wait
+Agent 2 → Extract business rules from payment module → Wait
+Agent 3 → Extract business rules from user module → Wait
 ```
 
 **Step 4: Two-Stage Review (per task)**
@@ -208,10 +212,9 @@ Merge all outputs into docs/output/business-rules.md
 
 **Related skills:**
 - **Direct extraction skills** - Handle single-file orchestration automatically
-- **unravel:dispatching-parallel-extractors** - Use for parallel-only execution
+- **unravel:dispatching-sequential-extractors** - Use for within-category sequential execution
 
 ## Commands
 
 - `/extract` - Trigger this orchestration skill
-- `/parallel-extract` - Trigger parallel extraction without planning
 - `/verify` - Trigger two-stage verification

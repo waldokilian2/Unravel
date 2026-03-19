@@ -190,5 +190,5 @@ Task("Review quality for integrations extraction")
 
 **For large tasks (10+ integrations, 5+ files):**
 - Use unravel:orchestrating-extractions for full orchestration
-- Use unravel:dispatching-parallel-extractors for parallel execution
+- Use unravel:dispatching-sequential-extractors for sequential execution within category
 - Use unravel:planning-extractions to create task plans

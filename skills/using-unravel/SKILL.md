@@ -41,10 +41,42 @@ Unravel **always** uses orchestration with subagent execution.
 
 **How it works:**
 1. **Identify** - Recognize code pattern matches a category
-2. **Invoke** - Use matching extraction skill
-3. **Orchestrate** - Skill dispatches subagent(s) for extraction
-4. **Review** - Two-stage review (spec compliance → quality)
-5. **Output** - Artifacts saved to `docs/output/`
+2. **Select** - Ask user which artifact types to extract
+3. **Choose execution** - Ask sequential or parallel (if multiple types)
+4. **Invoke** - Use matching extraction skill(s)
+5. **Orchestrate** - Skill dispatches subagent(s) for extraction
+6. **Review** - Two-stage review (spec compliance → quality)
+7. **Output** - Artifacts saved to `docs/output/`
+
+## User Selection Pattern
+
+When starting an extraction, guide the user through these questions:
+
+**Step 1: Select Artifact Types**
+```
+"Which artifact types would you like to extract from the codebase?"
+
+[ ] Business Rules (conditional logic, validation, exceptions)
+[ ] User Stories (routes, controllers, user intent)
+[ ] Process Flows (function call chains, state machines, workflows)
+[ ] Data Specs (schemas, DTOs, ORMs, validation)
+[ ] Security/NFRs (auth, middleware, logging, performance)
+[ ] Integrations (APIs, env vars, external services)
+[ ] All of the above
+```
+
+**Step 2: Execution Mode (if 2+ types selected)**
+```
+"How should the extractions run?"
+
+[ ] Sequential (one category finishes before next starts)
+[ ] Parallel (all categories run simultaneously)
+```
+
+**Step 3: Execute Based on Selection**
+- **Single category** → Invoke that extraction skill directly
+- **Multiple, Sequential** → Invoke skills one at a time, wait for each
+- **Multiple, Parallel** → Launch Agent() for each category simultaneously
 
 **Example:**
 ```
@@ -81,7 +113,7 @@ Each skill dispatches subagent(s) and runs two-stage review:
 Used by extraction skills for complex scenarios:
 
 - **unravel:orchestrating-extractions** - Master orchestration for complex multi-file extractions
-- **unravel:dispatching-parallel-extractors** - Parallel dispatch for independent files
+- **unravel:dispatching-sequential-extractors** - Sequential dispatch for files within same category
 - **unravel:planning-extractions** - Task planning for large/unknown scopes
 - **unravel:orchestrating-verification** - Two-stage verification coordination
 
@@ -122,8 +154,8 @@ Focused subagents for single extraction tasks (one file or pattern group):
 
 **Extraction Subagents:**
 - Always dispatched by extraction skills
-- Even single-file = single subagent
-- Multiple files = parallel subagent dispatch
+- Single file = single subagent
+- Multiple files within same category = sequential subagent dispatch
 - Fresh context per extraction (no pollution)
 
 **Reviewer Agents:**

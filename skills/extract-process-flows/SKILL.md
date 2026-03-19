@@ -28,9 +28,9 @@ This skill **always** orchestrates subagent execution. Even for single-file extr
 
 **How it works:**
 1. You (orchestrator) analyze scope and identify files
-2. Dispatch one or more process-flows-extractor-subagent tasks
+2. Dispatch process-flows-extractor-subagent tasks sequentially
 3. For each completed task: run spec compliance review → quality review
-4. Aggregate results into docs/output/process-flows.md
+4. Output is accumulated in docs/output/process-flows.md
 
 ## Core Principle
 **Trace-first: Follow the execution path from entry point to completion**
@@ -124,7 +124,7 @@ Source: src/orders/StateMachine.ts:10-25
 
 **Single file:**
 ```
-Task("Extract process flows from payment.ts")
+Agent("Extract process flows from payment.ts")
 
 Subagent receives:
 - File: payment.ts
@@ -132,13 +132,14 @@ Subagent receives:
 - Output: docs/output/process-flows.md
 ```
 
-**Multiple files (parallel):**
+**Multiple files (sequential):**
 ```
-Task("Extract process flows from auth module")
-Task("Extract process flows from payment module")
-Task("Extract process flows from user module")
-
-All three run concurrently
+Agent("Extract process flows from auth module")
+→ Wait for completion →
+Agent("Extract process flows from payment module")
+→ Wait for completion →
+Agent("Extract process flows from user module")
+→ Wait for completion
 ```
 
 ## Two-Stage Review (Required)
@@ -170,5 +171,5 @@ Task("Review quality for process flows extraction")
 
 **For large tasks (10+ flows, 5+ files):**
 - Use unravel:orchestrating-extractions for full orchestration
-- Use unravel:dispatching-parallel-extractors for parallel execution
+- Use unravel:dispatching-sequential-extractors for sequential execution within category
 - Use unravel:planning-extractions to create task plans
