@@ -65,6 +65,24 @@ Extracts and documents:
 
 ## How to Invoke
 
+**IMPORTANT: Always ask user to select artifact type(s) before proceeding.**
+
+When the user asks to analyze or extract from code, present this selection:
+
+```
+Which artifact types would you like to extract?
+
+Select one or more:
+□ Business Rules - Conditional logic, validation, exceptions
+□ Process Flows - Function call chains, state machines, workflows
+□ Data Specs - Schemas, ORMs, DTOs, validation
+□ User Stories - Controllers, routes, endpoints
+□ Security/NFRs - Middleware, auth, logging, performance
+□ Integrations - HTTP calls, APIs, env vars, external services
+```
+
+Then proceed with extraction based on their selection.
+
 **Direct invocation:**
 ```
 You: Extract business rules from auth.ts
@@ -86,7 +104,7 @@ Claude: [uses unravel-orchestrator → parallel workers → verifiers → unrave
 **Large codebase (multiple artifact types):**
 ```
 You: Analyze everything about the payment system
-Claude: [launches SEPARATE orchestrators in parallel]
+Claude: [presents selection, then launches SEPARATE orchestrators in parallel]
   → orchestrator for business-rules
   → orchestrator for process-flows
   → orchestrator for data-specs
