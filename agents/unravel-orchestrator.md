@@ -167,4 +167,8 @@ This requires separate extractions for each artifact type. Launching:
 6. unravel-orchestrator for integrations
 
 Each will run independently and produce its own output file.
+
+After all extractions complete, I can create an executive summary.
 ```
+
+**After all orchestrators complete:** Offer to launch unravel-summarizer to create `docs/output/EXECUTIVE-SUMMARY.md`

@@ -70,6 +70,23 @@ Claude: Found 47 files across 3 modules.
        [same process for process-flows]
 ```
 
+### Step 3: Executive Summary (Optional)
+
+After all extractions complete, Unravel offers to create an executive summary:
+
+```
+All extractions complete! Would you like me to create an executive summary?
+
+[✓] Yes - Create EXECUTIVE-SUMMARY.md
+[ ] No - I'm done
+```
+
+The executive summary includes:
+- Overview of what the codebase does
+- Key findings from each artifact type
+- Top insights and recommendations
+- Links to all generated artifacts
+
 ### Output
 
 All extracted artifacts are saved to `docs/output/`:
@@ -80,6 +97,7 @@ All extracted artifacts are saved to `docs/output/`:
 - user-stories.md
 - security-nfrs.md
 - integrations.md
+- **EXECUTIVE-SUMMARY.md** (optional, generated on request)
 
 ## How It Works
 
@@ -91,6 +109,7 @@ All extracted artifacts are saved to `docs/output/`:
 | **unravel-orchestrator** | Coordinate workers, verifiers, and merger (10+ files) |
 | **unravel-verifier** | Independently verify extraction outputs |
 | **unravel-merger** | Combine verified outputs into final file |
+| **unravel-summarizer** | Create executive summary from all outputs |
 
 ### Execution Model
 
