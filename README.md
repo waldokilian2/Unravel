@@ -11,41 +11,63 @@ Unravel the mysteries in your code. Automatic business artifact extraction from 
 
 ## Usage
 
-Simply open any codebase and start asking questions. The plugin automatically triggers when relevant patterns are detected.
+### Step 1: Select What to Extract
 
-### Example Usage
-
-```
-You: What are the business rules in this codebase?
-Claude: [automatically uses extract-business-rules skill]
-```
+When you ask Unravel to analyze code, it will first ask you to select artifact types:
 
 ```
-You: Analyze the payment flow
-Claude: [automatically uses extract-process-flows skill]
+Which artifact types would you like to extract?
+
+□ Business Rules - Conditional logic, validation, exceptions
+□ Process Flows - Function call chains, state machines, workflows
+□ Data Specs - Schemas, ORMs, DTOs, validation
+□ User Stories - Controllers, routes, endpoints
+□ Security/NFRs - Middleware, auth, logging, performance
+□ Integrations - HTTP calls, APIs, env vars, external services
 ```
 
-### Manual Invocation
+### Step 2: Unravel Extracts
 
-You can also invoke specific skills:
+Unravel automatically chooses the best path:
+
+**Simple Path (< 10 files):** Fast, single-pass extraction
+```
+User → Select type(s) → unravel-extractor → Output
+```
+
+**Complex Path (10+ files):** Sequential extraction with independent verification
+```
+User → Select type(s) → unravel-orchestrator → workers (sequential) → verifiers (sequential) → unravel-merger → Output
+```
+
+### Example Workflow
 
 ```
-You: Use extract-data-specs to analyze the models
-```
+You: Analyze the payment system
 
-### Large Codebases
+Claude: Which artifact types would you like to extract?
+       [✓] Business Rules
+       [✓] Process Flows
+       [ ] Data Specs
+       [ ] User Stories
+       [ ] Security/NFRs
+       [ ] Integrations
 
-For large codebases, Unravel automatically splits work into parallel modules. Each artifact type is extracted independently:
+Claude: Found 47 files across 3 modules.
+       Using complex path with sequential execution.
 
-```
-You: Analyze the entire payment system
-Claude: [launches parallel extraction for each artifact type]
-  → business-rules extraction
-  → process-flows extraction
-  → data-specs extraction
-  → user-stories extraction
-  → security-nfrs extraction
-  → integrations extraction
+       Module 1/3: Extracting business-rules... ✓
+       Module 1/3: Verifying business-rules... ✓
+       Module 2/3: Extracting business-rules... ✓
+       Module 2/3: Verifying business-rules... ✓
+       Module 3/3: Extracting business-rules... ✓
+       Module 3/3: Verifying business-rules... ✓
+       Merging outputs... ✓
+
+       Output: docs/output/business-rules.md
+
+       Now extracting process-flows...
+       [same process for process-flows]
 ```
 
 ### Output
@@ -61,23 +83,18 @@ All extracted artifacts are saved to `docs/output/`:
 
 ## How It Works
 
-Unravel uses a smart path-selection architecture:
-
-**Simple Path (< 10 files):** Fast, single-pass extraction
-```
-User → unravel-extractor → Output
-```
-
-**Complex Path (10+ files):** Parallel extraction with independent verification
-```
-User → unravel-orchestrator → (parallel workers) → (parallel verifiers) → unravel-merger → Output
-```
-
 ### Agents
 
 | Agent | Purpose |
 |-------|---------|
-| **unravel-extractor** | Extract patterns from files |
-| **unravel-orchestrator** | Coordinate workers, verifiers, and merger for large tasks |
+| **unravel-extractor** | Extract patterns from files (< 10 files) |
+| **unravel-orchestrator** | Coordinate workers, verifiers, and merger (10+ files) |
 | **unravel-verifier** | Independently verify extraction outputs |
 | **unravel-merger** | Combine verified outputs into final file |
+
+### Execution Model
+
+- **Sequential execution:** Workers and verifiers run one at a time
+- **One artifact type per orchestrator:** Multiple types = multiple orchestrators
+- **Independent verification:** Each module's output is verified before merging
+- **Fail-fast:** Stops on errors, doesn't merge partial/bad results
