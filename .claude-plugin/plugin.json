@@ -6,8 +6,8 @@
     "name": "Waldo Kilian",
     "email": "waldokilian2@users.noreply.github.com"
   },
-  "homepage": "https://github.com/waldokilian2/Unravel",
-  "repository": "https://github.com/waldokilian2/Unravel",
+  "homepage": "https://github.com/waldokilian2/unravel",
+  "repository": "https://github.com/waldokilian2/unravel",
   "license": "MIT",
   "keywords": ["unravel", "business-analysis", "documentation", "reverse-engineering", "artifact-extraction", "business-rules", "process-flows"]
 }
