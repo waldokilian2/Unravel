@@ -78,9 +78,27 @@ If only one module or few files, treat as a single module named after the primar
 
 For each module, launch an Agent SEQUENTIALLY - wait for each to complete before launching the next:
 
+**CRITICAL:** You must tell the extractor to read the relevant extraction skill first.
+
+**Skill name mapping (use these exactly):**
+| Artifact Type | Skill Name |
+|---------------|------------|
+| business-rules | unravel:extract-business-rules |
+| process-flows | unravel:extract-process-flows |
+| data-specs | unravel:extract-data-specs |
+| user-stories | unravel:extract-user-stories |
+| security-nfrs | unravel:extract-security-nfrs |
+| integrations | unravel:extract-integrations |
+
 ```
 Agent(unravel-extractor,
      "Extract [artifact-type] from [module-name] module
+
+      **INSTRUCTION:** First, use the Skill tool to read: [exact skill name from table above]
+      This skill contains the domain knowledge, hotspot patterns, and output format for this artifact type.
+
+      After reading the skill, proceed with extraction following its guidance.
+
       Artifact Type: [artifact-type]
       Module Name: [module-name]
       Files: [specific file paths]
@@ -88,20 +106,30 @@ Agent(unravel-extractor,
 ```
 
 **IMPORTANT:** Launch extractors SEQUENTIALLY - one at a time.
+**IMPORTANT:** Always include the Skill tool instruction with the exact skill name.
 
 ### Step 3: Verify Each Output (Sequential)
 
 For each temp file created, launch a verifier SEQUENTIALLY - wait for each to complete:
 
+**CRITICAL:** You must tell the verifier to read the relevant extraction skill first (to understand what to verify).
+
 ```
 Agent(unravel-verifier,
      "Verify extraction output
+
+      **INSTRUCTION:** First, use the Skill tool to read: [exact skill name from table above]
+      This skill defines what artifacts should be extracted and how to verify them.
+
+      After reading the skill, proceed with verification following its guidance.
+
       Output File: docs/output/[artifact-type].[module-name].tmp.md
       Source Files: [files that module analyzed]
       Artifact Type: [artifact-type]")
 ```
 
 **IMPORTANT:** Launch verifiers SEQUENTIALLY as extractors complete.
+**IMPORTANT:** Always include the Skill tool instruction with the exact skill name.
 
 ### Step 4: Merge (After All Verifications Pass)
 
@@ -122,8 +150,17 @@ Agent(unravel-merger,
 3. Explain recovery options:
    - **Option A:** Re-run extraction for the failed module only:
      ```
-     Agent(unravel-extractor, "Extract [artifact-type] from [failed-module]...")
-     Agent(unravel-verifier, "Verify docs/output/[artifact-type].[failed-module].tmp.md...")
+     Agent(unravel-extractor, "Extract [artifact-type] from [failed-module] module
+
+      **INSTRUCTION:** First, use the Skill tool to read: [exact skill name]
+      Then proceed with extraction.")
+
+     Agent(unravel-verifier, "Verify extraction output
+
+      **INSTRUCTION:** First, use the Skill tool to read: [exact skill name]
+      Then proceed with verification.
+
+      Output File: docs/output/[artifact-type].[failed-module].tmp.md...")
      ```
    - **Option B:** Delete the failed temp file and manually fix issues in the source
    - **Option C:** Skip the failed module and merge the rest (user confirmation required)
