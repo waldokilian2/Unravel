@@ -31,11 +31,16 @@ What are the validation rules in this code?
 | **User Stories** | End-user actions from controllers, routes, CLI handlers |
 | **Security / NFRs** | Auth patterns, rate limits, encryption, logging |
 | **Integrations** | HTTP clients, database connections, external services |
+| **API Contracts** | Request/response schemas, endpoints, status codes |
+| **Domain Vocabulary** | Enums, constants, business terminology, error catalogs |
+| **Dependency Map** | Module coupling, package dependencies, architecture |
+| **Test Coverage** | Test suites, coverage gaps, mocked dependencies |
+| **Evolution History** | Deprecated code, tech debt, migration history |
 
 ## How It Works
 
 ```
-You select what to extract
+You select what to extract (4 groups, 11 types)
         │
         ▼
   Files discovered & grouped into modules
@@ -57,6 +62,9 @@ You select what to extract
          │
          ▼
   Optional executive summary
+         │
+         ▼
+  Optional synthesis documents
 ```
 
 ### Verification
@@ -75,17 +83,25 @@ All artifacts land in `docs/output/`, organized by type:
 ```
 docs/output/
 ├── business-rules/
-│   ├── 00-INDEX.md          ← Table of contents
+│   ├── 00-INDEX.md          ← Table of contents with key findings
 │   ├── auth.md              ← One file per module
 │   └── payment.md
 ├── process-flows/
-│   ├── 00-INDEX.md
-│   └── ...
 ├── data-specs/
 ├── user-stories/
 ├── security-nfrs/
 ├── integrations/
-└── EXECUTIVE-SUMMARY.md      ← Optional, on request
+├── api-contracts/
+├── domain-vocabulary/
+├── dependency-map/
+├── test-coverage/
+├── evolution-history/
+├── EXECUTIVE-SUMMARY.md      ← Optional, on request
+├── REQUIREMENTS.md           ← Synthesis: /synthesize-requirements
+├── ARCHITECTURE.md           ← Synthesis: /synthesize-architecture
+├── DATA-DICTIONARY.md        ← Synthesis: /synthesize-data-dictionary
+├── SECURITY-AUDIT.md         ← Synthesis: /synthesize-security-audit
+└── TEST-PLAN.md              ← Synthesis: /synthesize-test-plan
 ```
 
 ## Under the Hood
@@ -103,18 +119,28 @@ Four specialized agents handle the work:
 
 ### Skills
 
-Eight skills provide domain knowledge and orchestration:
+11 extraction skills provide domain knowledge, 2 orchestration skills coordinate workflows, and 5 synthesis skills combine extracted artifacts into stakeholder-ready documents:
 
 | Skill | Purpose |
 |-------|---------|
 | **using-unravel** | Entry point — artifact selection, verification preference |
 | **orchestrating-extraction** | Per-type workflow — discovery, batching, verification, index |
 | **extract-business-rules** | Pattern definitions for business rules |
-| **extract-process-flows** | Pattern definitions for process flows |
+| **extract-process-flows** | Pattern definitions for process and data flows |
 | **extract-data-specs** | Pattern definitions for data specifications |
 | **extract-user-stories** | Pattern definitions for user stories |
 | **extract-security-nfrs** | Pattern definitions for security and NFRs |
 | **extract-integrations** | Pattern definitions for integrations |
+| **extract-api-contracts** | Pattern definitions for API contracts |
+| **extract-domain-vocabulary** | Pattern definitions for domain vocabulary and error catalogs |
+| **extract-dependency-map** | Pattern definitions for dependency maps |
+| **extract-test-coverage** | Pattern definitions for test coverage analysis |
+| **extract-evolution-history** | Pattern definitions for evolution history |
+| **synthesize-requirements** | Combines rules, stories, security, and flows into requirements document |
+| **synthesize-architecture** | Combines dependencies, integrations, flows, and data specs into architecture overview |
+| **synthesize-data-dictionary** | Combines data specs and domain vocabulary into unified data dictionary |
+| **synthesize-security-audit** | Combines security, integrations, and API contracts into security audit |
+| **synthesize-test-plan** | Combines test coverage, rules, and stories into prioritized test plan |
 
 ### Execution Model
 
@@ -129,35 +155,40 @@ Eight skills provide domain knowledge and orchestration:
 ```
 You: /unravel
 
-Claude: What would you like to extract?
+Claude: Unravel can extract these artifact types:
 
-       □ Business Logic - Rules, flows, user stories
-       □ Data Specifications - Schemas, models, DTOs
-       □ Technical Details - Security, integrations
-       □ Everything - All 6 types
+       1. Business Rules
+       2. Process & Data Flows
+       3. User Stories
+       4. Data Specs
+       5. Security & NFRs
+       6. API Contracts
+       7. Integrations & Config
+       8. Domain Vocabulary
+       9. Dependency Map
+       10. Test Coverage
+       11. Evolution History
 
-       [You select Business Logic → All types]
+       Which areas would you like to extract?
+
+       [✓] Business Logic — Business rules, process & data flows, user stories
+       [ ] Data & Domain — Data specs, domain vocabulary
+       [ ] Interfaces & Security — API contracts, integrations, security & NFRs
+       [ ] Architecture — Dependency map, test coverage, evolution history
+
+       [You select Business Logic]
 
 Claude: Would you like independent verification?
 
-       [✓] Yes - Most thorough
-       [ ] No  - Faster
+       [ ] Yes - Most thorough, slower
+       [✓] No  - Extractor self-verifies, faster
 
-       [You select Yes]
+       [You select No]
 
 Claude: Found 47 files across 3 modules.
 
        Batch 1/2: Extracting business-rules from auth, payment... done
        Batch 2/2: Extracting business-rules from user... done
-
-       Verifying auth... PASSED
-       Verifying payment... FAILED (3 issues)
-       Verifying user... PASSED
-
-       Fixing payment... Removed 1 hallucinated rule,
-                        Updated 1 wrong location,
-                        Augmented 1 incomplete rule
-       Re-verification PASSED
 
        Output: docs/output/business-rules/
 
@@ -166,6 +197,20 @@ Claude: Found 47 files across 3 modules.
        All extractions complete! Create an executive summary?
        [You select Yes]
 ```
+
+### After Extraction: Synthesis Commands
+
+Once you've extracted the relevant artifact types, generate stakeholder-ready documents:
+
+```
+You: /synthesize-requirements
+You: /synthesize-architecture
+You: /synthesize-data-dictionary
+You: /synthesize-security-audit
+You: /synthesize-test-plan
+```
+
+Each command checks that its prerequisite extractions exist and combines them into a single document. For example, `/synthesize-requirements` requires business-rules, user-stories, security-nfrs, and process-flows extractions.
 
 ## License
 
