@@ -94,7 +94,7 @@ for i in range(0, len(modules), batch_size):
 ```
 
 **IMPORTANT:** Launch extractors in batches of 2 (parallel within batch, sequential between batches).
-**IMPORTANT:** Always embed the full skill content in the prompt.
+**IMPORTANT:** Always embed the full extraction skill content in the prompt.
 **IMPORTANT:** Use `run_in_background=true` for parallel agent spawns.
 **IMPORTANT:** Do NOT include Skill tool instructions — the skill content is already provided.
 

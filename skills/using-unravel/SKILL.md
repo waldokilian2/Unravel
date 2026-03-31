@@ -90,7 +90,7 @@ Options (multiSelect: true):
 - Interfaces & Security → api-contracts, integrations, security-nfrs
 - Architecture → dependency-map, test-coverage, evolution-history
 
-**Refinement (Step 1b):** If the user selects exactly **one** group, skip refinement and extract all types within that group. If the user selects **two or more** groups, ask a follow-up for each multi-type group to let them narrow down:
+**Refinement (Step 1b):** For **every** selected group, ask a follow-up to let the user narrow down the sub-types:
 
 ```
 Question: "Which [Group Name] types?" (multiSelect: true)

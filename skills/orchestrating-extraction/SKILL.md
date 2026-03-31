@@ -21,7 +21,7 @@ Analyze the extraction request and coordinate the full extraction pipeline for o
 
 ## Coordination Process
 
-### Step 0: Load Skill Content
+### Step 1: Load Skill Content & Prepare for Orchestration
 
 Load the relevant extraction skill ONCE using the Skill tool:
 
@@ -29,7 +29,7 @@ Load the relevant extraction skill ONCE using the Skill tool:
 Skill("unravel:extract-[artifact-type]")
 ```
 
-The Skill tool returns the **complete SKILL.md content** into your context. Store this entire content — every line from `---` to the end — for embedding in agent prompts.
+The Skill tool returns the **complete extraction SKILL.md content** into your context. Store this entire content — every line from `---` to the end — for embedding in sub agent prompts. Extract the hotspot patterns from the loaded skill for use in the next step.
 
 | Artifact Type | Skill Name |
 |---------------|------------|
@@ -45,7 +45,7 @@ The Skill tool returns the **complete SKILL.md content** into your context. Stor
 | evolution-history | unravel:extract-evolution-history |
 | domain-vocabulary | unravel:extract-domain-vocabulary |
 
-**CRITICAL:** Embed the **complete, verbatim skill content** in every agent prompt. Do NOT summarize, condense, or selectively quote sections. Pass the entire SKILL.md content. The agents have no way to load skills themselves — they depend entirely on what you provide.
+**CRITICAL:** Embed the **complete, verbatim skill content** in every sub agent prompt (Extractors). Do NOT summarize, condense, or selectively quote sections. Pass the entire SKILL.md content. The agents have no way to load skills themselves — they depend entirely on what you provide.
 
 **WRONG:**
 ```
@@ -59,9 +59,9 @@ Key patterns from the skill: "Extract if/else chains, validation decorators..."
 
 **IMPORTANT:** Do NOT tell agents to use the Skill tool. They cannot access it.
 
-### Step 1: Discover Files, Create Output Folder, Split into Modules
+### Step 2: Discover Files, Create Output Folder, Split into Modules
 
-1. Use the hotspot patterns from the loaded skill content
+1. Use the hotspot patterns extracted in Step 1
 2. Use **Glob/Grep tools** (not bash grep) to find all relevant files
 3. Create the output folder using Bash: `mkdir -p "docs/output/[artifact-type]/"`
 4. Split discovered files into logical modules
@@ -85,17 +85,17 @@ docs/output/[artifact-type]/
 └── [module-name].md
 ```
 
-### Step 2: Launch Extractors (Batched Parallel)
+### Step 3: Launch Extractors (Batched Parallel)
 
-For each module, launch extractors in batches of 2 (max 2 concurrent agents). Embed the skill content directly in the agent prompt. Use `run_in_background=true` for parallel spawns.
+For each module, launch extractors in batches of 2 (max 2 concurrent agents). Embed the extraction skill content directly in the agent prompt. Use `run_in_background=true` for parallel spawns. Everything is explained in the batching strategy.
 
 For detailed prompt templates, timeline diagrams, and batching pseudocode, read [references/batching-strategy.md](references/batching-strategy.md).
 
-### Step 3: Verification Phase
+### Step 4: Verification Phase
 
 This entire phase is conditional based on the **verification preference** provided by using-unravel. Do NOT ask the user for this preference.
 
-**If verification is "No":** Skip directly to Step 4 (Create Index).
+**If verification is "No":** Skip directly to Step 5 (Create Index).
 
 **If verification is "Yes":** Execute the following three subprocesses sequentially.
 
@@ -142,7 +142,7 @@ For each failed module:
 Which option would you like for each failed module?
 ```
 
-### Step 4: Create Index
+### Step 5: Create Index
 
 Only create the index when all modules to be included have passed verification (or the user explicitly chose to skip failed modules).
 
