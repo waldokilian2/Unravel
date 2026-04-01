@@ -141,6 +141,7 @@ Four specialized agents handle the work:
 | **synthesize-data-dictionary** | Combines data specs and domain vocabulary into unified data dictionary |
 | **synthesize-security-audit** | Combines security, integrations, and API contracts into security audit |
 | **synthesize-test-plan** | Combines test coverage, rules, and stories into prioritized test plan |
+| **synthesize-business-spec** | **NEW:** Combines ALL 11 extraction types into comprehensive business specification document for stakeholders |
 
 ### Execution Model
 
