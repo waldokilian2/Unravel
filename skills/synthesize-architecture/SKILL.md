@@ -61,7 +61,78 @@ For each extraction type that passed the prerequisite check:
 - Read all module files for `dependency-map` (this is the structural backbone).
 - For the other types (`integrations`, `process-flows`, `data-specs`), read the index, identify the most significant modules (those with the most artifacts, referenced by dependency-map, or containing external service integrations), and read those in full. For the remaining modules, use Grep to find specific cross-references (module names, entity names, service names) as needed rather than reading every file.
 
-### Step 3: Cross-Reference and Synthesize
+### Step 3: Generate Architecture Diagrams
+
+Generate three Mermaid diagrams to visualize the architecture:
+
+#### 3.1: Component Dependency Diagram
+
+Create a Mermaid flowchart showing modules and their dependencies based on dependency-map extraction:
+
+```mermaid
+flowchart TD
+    [Module A] --> [Module B]
+    [Module A] --> [Module C]
+    [Module B] --> [Module D]
+```
+
+- **Nodes:** Each module from dependency-map
+- **Edges:** Dependency relationships (A → B means A depends on B)
+- **Grouping:** Use subgraphs to group related modules if dependency-map shows logical groupings
+- **Styling:** Highlight modules with many dependencies (hubs) or circular dependencies
+
+Include this diagram at the end of the **Component Map** section.
+
+#### 3.2: Integration Flow Diagram
+
+Create a Mermaid flowchart showing external services and module connections based on integrations extraction:
+
+```mermaid
+flowchart LR
+    subgraph Internal
+        [Module A]
+        [Module B]
+    end
+    subgraph External
+        [Service X]
+        [Service Y]
+    end
+    Module A -->|HTTP| Service X
+    Module B -->|Queue| Service Y
+```
+
+- **Nodes:** Internal modules (grouped) and external services (grouped)
+- **Edges:** Connections with protocols (HTTP, gRPC, queue, event, etc.)
+- **Direction:** Internal → External for outbound integrations
+
+Include this diagram at the end of the **Integration Points** section.
+
+#### 3.3: Entity Relationship Diagram
+
+Create a Mermaid ER diagram showing entities and their relationships based on data-specs extraction:
+
+```mermaid
+erDiagram
+    ENTITY_A ||--o{ ENTITY_B : "relationship label"
+    ENTITY_B ||--|{ ENTITY_C : "relationship label"
+    ENTITY_A {
+        string id PK
+        string name
+    }
+```
+
+- **Entities:** Core entities from data-specs (not all entities — focus on the most important 10-15)
+- **Relationships:** One-to-one, one-to-many, many-to-many as defined in data-specs
+- **Fields:** Only include key identifying fields (PK, FK, name fields)
+
+Include this diagram at the end of the **Entity Relationships** subsection under Data Architecture.
+
+**Diagram scaling:**
+- If there are 20+ modules, show only the most significant ones in the component diagram (those with most dependencies, external integrations, or business logic)
+- If there are 20+ entities, show only core entities in the ER diagram (aggregate roots, central entities, those referenced by flows)
+- For integration diagram, always show all external services but can group minor internal modules
+
+### Step 4: Cross-Reference and Synthesize
 
 While reading the artifacts, actively cross-reference between them:
 
@@ -92,6 +163,11 @@ Write the output to `docs/output/ARCHITECTURE.md` using the following structure 
 
 ## Component Map
 
+```mermaid
+flowchart TD
+    [Generated component dependency diagram showing modules and their relationships]
+```
+
 [For each module from dependency-map:]
 
 ### [Module Name]
@@ -103,6 +179,17 @@ Write the output to `docs/output/ARCHITECTURE.md` using the following structure 
 ---
 
 ## Integration Points
+
+```mermaid
+flowchart LR
+    subgraph Internal
+        [Internal modules]
+    end
+    subgraph External
+        [External services]
+    end
+    [Connections with protocols]
+```
 
 ### External Services
 | Service | Purpose | Protocol | Module(s) | Source |
@@ -117,6 +204,13 @@ Write the output to `docs/output/ARCHITECTURE.md` using the following structure 
 ## Data Architecture
 
 ### Entity Relationships
+
+```mermaid
+erDiagram
+    [Generated ER diagram showing core entities and their relationships]
+```
+
+[Prose description (1-3 paragraphs) synthesizing the overall data model from data-specs. Describe the core entities, their relationships (one-to-many, many-to-many), and any notable patterns such as aggregate roots, value objects, or polymorphic associations. Do not repeat every field — focus on the shape and relationships of the data model at a stakeholder level.]
 [Prose description (1-3 paragraphs) synthesizing the overall data model from data-specs. Describe the core entities, their relationships (one-to-many, many-to-many), and any notable patterns such as aggregate roots, value objects, or polymorphic associations. Do not repeat every field — focus on the shape and relationships of the data model at a stakeholder level.]
 
 ### Data Flow

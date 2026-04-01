@@ -59,7 +59,86 @@ For each extraction type that passed the prerequisite check:
 - Read all module files for `security-nfrs` (this is the security backbone containing auth, access control, and infrastructure security details).
 - For the other types (`integrations`, `api-contracts`), read the index, identify the most significant modules (those with the most artifacts, referenced by security-nfrs, or involving authentication or data exchange), and read those in full. For the remaining modules, use Grep to find specific cross-references (service names, endpoint paths, auth patterns) as needed rather than reading every file.
 
-### Step 3: Cross-Reference and Synthesize
+### Step 3: Generate Security Diagrams
+
+Generate three Mermaid diagrams to visualize the security architecture:
+
+#### 3.1: Authentication Flow Diagram
+
+Create a sequence diagram showing the authentication flow based on security-nfrs extraction:
+
+```mermaid
+sequenceDiagram
+    actor User
+    User->>API: Login request
+    API->>AuthService: Validate credentials
+    AuthService->>DB: Verify user
+    DB-->>AuthService: User data
+    AuthService-->>API: Token
+    API-->>User: Authenticated response
+```
+
+- Include the key steps: credential submission, validation, token generation, token refresh if applicable
+- Show the components involved (client, API, auth service, database, external auth provider if applicable)
+- Include session/token storage and expiry mechanisms
+
+Include this diagram at the end of the **Authentication** section.
+
+#### 3.2: Authorization Model Diagram
+
+Create a flowchart showing the role model and access control based on security-nfrs extraction:
+
+```mermaid
+flowchart TD
+    User[User] --> Auth[Authentication]
+    Auth --> Role{Has Role?}
+    Role --> Admin[Admin]
+    Role --> UserReg[User]
+    Role --> Guest[Guest]
+    Admin --> FullAccess[Full Access]
+    UserReg --> LimitedAccess[Limited Access]
+    Guest --> Public[Public Only]
+```
+
+- Show roles defined in the system
+- Show role hierarchy if inheritance exists
+- Show resource-level access patterns if significant
+
+Include this diagram at the end of the **Authorization** section.
+
+#### 3.3: External Exposure Diagram
+
+Create a flowchart showing external integrations and data exposure based on integrations and api-contracts extraction:
+
+```mermaid
+flowchart LR
+    subgraph Internal
+        API[API]
+        Services[Services]
+    end
+    subgraph External
+        Svc1[Service 1]
+        Svc2[Service 2]
+        Public[Public Internet]
+    end
+    API -->|HTTPS| Svc1
+    Services -->|API Key| Svc2
+    Public -->|HTTPS| API
+```
+
+- Show internal components (API, services)
+- Show external services and how they connect
+- Show public endpoints and exposure paths
+- Label connections with protocols and authentication methods
+
+Include this diagram at the end of the **External Exposure** section.
+
+**Diagram scaling:**
+- If there are 10+ external services, group them by type (payment, analytics, messaging)
+- If there are 20+ roles, show only the most significant ones in the authorization diagram
+- For authentication flow, always show the complete flow as it's typically linear
+
+### Step 4: Cross-Reference and Synthesize
 
 While reading the artifacts, actively cross-reference between them:
 
@@ -85,6 +164,11 @@ Write the output to `docs/output/SECURITY-AUDIT.md` using the following structur
 
 ## Authentication
 
+```mermaid
+sequenceDiagram
+    [Generated authentication flow diagram]
+```
+
 [Synthesize authentication findings from all security-nfrs modules. Describe the mechanism (JWT, OAuth, session-based, etc.), token handling (generation, refresh, expiry, storage), session management, password policies, and multi-factor authentication if present. Write 1-3 paragraphs of prose that gives an auditor a clear picture of how users prove their identity.]
 
 | Aspect | Implementation | Risk Level | Source |
@@ -96,6 +180,11 @@ Write the output to `docs/output/SECURITY-AUDIT.md` using the following structur
 ---
 
 ## Authorization
+
+```mermaid
+flowchart TD
+    [Generated authorization model diagram]
+```
 
 ### Role Model
 
@@ -124,6 +213,17 @@ Write the output to `docs/output/SECURITY-AUDIT.md` using the following structur
 ---
 
 ## External Exposure
+
+```mermaid
+flowchart LR
+    subgraph Internal
+        [Internal components]
+    end
+    subgraph External
+        [External services]
+    end
+    [Connections with protocols]
+```
 
 ### Third-Party Integrations
 

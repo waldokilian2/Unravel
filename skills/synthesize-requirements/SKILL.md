@@ -59,7 +59,26 @@ For each of the four prerequisite types:
 - Read every module file for `business-rules` and `user-stories` (these are the primary inputs for domain grouping and traceability).
 - For `security-nfrs` and `process-flows` modules beyond the first 5, read the index, identify the most significant modules (those with the most artifacts, or covering security/auth/process topics most likely to intersect with business rules), and use Grep for specific references to modules mentioned in business-rules or user-stories.
 
-### Step 3: Analyze and Cross-Reference
+### Step 3: Generate Process Flow Diagrams
+
+For each significant process flow from process-flows extraction, generate or reproduce a Mermaid flowchart:
+
+```mermaid
+flowchart TD
+    A[Start] --> B[step1]
+    B -->|condition| C[branch1]
+    B -->|condition| D[branch2]
+    C --> E[End]
+    D --> E
+```
+
+- **Flows to diagram:** Include flows that represent core business processes or complex decision logic
+- **Source:** Use the flow diagrams from process-flows extraction modules, or generate simplified versions if the extraction doesn't include diagrams
+- **Scaling:** For large systems with 10+ flows, diagram only the most significant 5-7 flows (those with the most business rules, user story connections, or complexity)
+
+Include each diagram in the corresponding **Process Context** section entry.
+
+### Step 4: Analyze and Cross-Reference
 
 Before writing, analyze the collected artifacts to build a mental model of the system:
 
@@ -138,6 +157,12 @@ Only include NFR sub-sections that have at least one requirement. Do not include
 ## Process Context
 
 ### [Flow Name]
+
+```mermaid
+flowchart TD
+    [Generated flowchart for this process]
+```
+
 [1-2 sentence summary of what the flow accomplishes.]
 - Modules involved: [comma-separated list of modules this flow touches]
 - Key decisions: [list of decision points from the flow]

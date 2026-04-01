@@ -59,7 +59,28 @@ Read all module files referenced in the index for each prerequisite type.
 
 This prevents context overflow while ensuring comprehensive coverage.
 
-### Step 3: Cross-Reference
+### Step 3: Generate Entity Relationship Diagram
+
+Create a Mermaid ER diagram showing the core entities and their relationships based on data-specs extraction:
+
+```mermaid
+erDiagram
+    ENTITY_A ||--o{ ENTITY_B : "relationship label"
+    ENTITY_B ||--|{ ENTITY_C : "relationship label"
+    ENTITY_A {
+        string id PK
+        string name
+    }
+```
+
+- **Entities:** Include the most significant 10-15 entities from data-specs (prioritize aggregate roots, central entities, those with most relationships)
+- **Relationships:** Include all relationship types (one-to-one, one-to-many, many-to-many) with cardinality symbols
+- **Fields:** Include only key identifying fields (primary keys, foreign keys, name fields) — not all fields
+- **Scaling:** If there are 20+ entities, show only the most important ones to keep the diagram readable
+
+Include this diagram at the beginning of the **Entity Reference** section.
+
+### Step 4: Cross-Reference
 
 As you read, begin identifying cross-references between data-specs and domain-vocabulary:
 - Which entity fields in data-specs use enum types defined in domain-vocabulary?
@@ -100,6 +121,11 @@ multiple source references.]
 ---
 
 ## Entity Reference
+
+```mermaid
+erDiagram
+    [Generated ER diagram showing core entities and their relationships]
+```
 
 [One subsection per entity found across all data-specs modules. Entities are sorted alphabetically.
 Each entity's description is a 1-2 sentence summary drawn from data-specs, enriched with relevant
